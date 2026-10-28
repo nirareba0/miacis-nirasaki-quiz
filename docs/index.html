@@ -989,6 +989,18 @@ h1 small {
     }
   }
 
+  // 順位を読む。MERGE_SET_TITLE があれば LINE 版（Miacis クイズ）の記録も混ぜた順位（0040）、無ければアプリ版だけ（0039）
+  function fetchRanking(cfg) {
+    const headers = { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': `Bearer ${cfg.SUPABASE_ANON_KEY}` };
+    if (cfg.MERGE_SET_TITLE) {
+      return fetch(`${cfg.SUPABASE_URL}/rest/v1/rpc/nirasaki_quiz_ranking_all`, {
+        method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_event: event, p_set_title: cfg.MERGE_SET_TITLE })
+      });
+    }
+    return fetch(`${cfg.SUPABASE_URL}/rest/v1/nirasaki_quiz_ranking?event=eq.${encodeURIComponent(event)}&order=rank.asc,created_at.asc&limit=100`, { headers });
+  }
+
   // ------------------ 答えあわせ（全問の解説） ------------------
   function renderReview() {
     if (pollIntervalId) { clearInterval(pollIntervalId); pollIntervalId = null; }
@@ -1066,12 +1078,7 @@ h1 small {
 
       const cfg = window.QUIZ_CONFIG || {};
       try {
-        const res = await fetch(`${cfg.SUPABASE_URL}/rest/v1/nirasaki_quiz_ranking?event=eq.${encodeURIComponent(event)}&order=rank.asc,created_at.asc&limit=100`, {
-          headers: {
-            'apikey': cfg.SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${cfg.SUPABASE_ANON_KEY}`
-          }
-        });
+        const res = await fetchRanking(cfg);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const list = await res.json();
         renderRankingRows(list, container, done);
@@ -1184,12 +1191,7 @@ h1 small {
 
       const cfg = window.QUIZ_CONFIG || {};
       try {
-        const res = await fetch(`${cfg.SUPABASE_URL}/rest/v1/nirasaki_quiz_ranking?event=eq.${encodeURIComponent(event)}&order=rank.asc,created_at.asc&limit=100`, {
-          headers: {
-            'apikey': cfg.SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${cfg.SUPABASE_ANON_KEY}`
-          }
-        });
+        const res = await fetchRanking(cfg);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const list = await res.json();
         renderRankingRows(list, sContainer, null);
