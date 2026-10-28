@@ -19,7 +19,7 @@ console.log('Building flyer...')
 execFileSync(process.execPath, [resolve(here, 'print/flyer.mjs')], { stdio: 'inherit' })
 
 // ② アプリのスマホ幅スクリーンショットを撮影
-const demos = ['start', 'q', 'feedback', 'result', 'ranking', 'staff']
+const demos = ['start', 'q', 'feedback', 'result', 'review', 'ranking', 'staff']
 const common = [
   '--headless=new',
   '--disable-gpu',

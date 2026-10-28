@@ -400,7 +400,7 @@ h1 small {
 <script src="data.js"></script>
 <script src="config.js"></script>
 <script>
-(function() {
+(async function() {
   const $ = s => document.querySelector(s);
   // uuid v4（DB の端末IDは uuid 型。randomUUID が無い古いブラウザでも uuid の形にする）
   function makeUuid() {
@@ -444,6 +444,9 @@ h1 small {
   const isStaff = params.get('staff') === '1' || demo === 'staff';
   // 館内のタブレットを何人かで順番に使うモード。1回ごとに別の端末IDで送り、「今日はもう遊んだ」を覚えない
   const isKiosk = params.get('kiosk') === '1';
+  // 公式LINE から LIFF で開いたとき（?line=1 かつ config.js に LIFF_ID）: LINE の名前を入れておき、端末IDは LINE の userId から作る
+  const viaLineParam = params.get('line') === '1';
+  let viaLine = false;
 
   // 端末ID
   let deviceId = '';
@@ -482,6 +485,29 @@ h1 small {
   // 送れなかった今日の記録（受付で見せる用）
   function getPendingRecord() {
     try { const v = localStorage.getItem(`quiz.pending.${event}`); return v ? JSON.parse(v) : null; } catch (e) { return null; }
+  }
+
+  // 文字列から同じ uuid を作る（LINE の userId → 端末ID。userId そのものは保存しない）
+  async function uuidFromString(str) {
+    if (!(crypto.subtle && crypto.subtle.digest)) return makeUuid();
+    const h = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str))).slice(0, 16);
+    h[6] = (h[6] & 0x0f) | 0x40; h[8] = (h[8] & 0x3f) | 0x80;
+    const x = [...h].map(b => b.toString(16).padStart(2, '0')).join('');
+    return `${x.slice(0,8)}-${x.slice(8,12)}-${x.slice(12,16)}-${x.slice(16,20)}-${x.slice(20)}`;
+  }
+  async function initLine() {
+    const cfg = window.QUIZ_CONFIG || {};
+    if (!viaLineParam || !cfg.LIFF_ID || demo) return;
+    try {
+      await new Promise((ok, ng) => { const sc = document.createElement('script'); sc.src = 'https://static.line-scdn.net/liff/edge/2/sdk.js'; sc.onload = ok; sc.onerror = ng; document.head.appendChild(sc); });
+      await liff.init({ liffId: cfg.LIFF_ID });
+      if (!liff.isLoggedIn()) { liff.login({ redirectUri: location.href }); return; }
+      const prof = await liff.getProfile();
+      const max = ((window.QUIZ && window.QUIZ.rules) || {}).nicknameMax || 12;
+      nickname = String(prof.displayName || '').trim().slice(0, max);
+      deviceId = await uuidFromString('line:' + prof.userId);
+      viaLine = true;
+    } catch (e) { console.warn('LINE login skipped', e); }
   }
 
   // 今日の記録
@@ -567,7 +593,7 @@ h1 small {
       <div class="card">
         <label style="font-weight:800;font-size:14px;display:block" for="nick-input">ニックネーム</label>
         <input type="text" id="nick-input" class="input-text" maxlength="${rules.nicknameMax || 12}" placeholder="例：にら丸" value="${esc(nickVal)}">
-        <p class="notice">本名はやめよう。${rules.nicknameMax || 12}文字まで（空なら「名無し」）</p>
+        <p class="notice">${viaLine ? 'LINE の名前が入っています（変えてもOK）。' : '本名はやめよう。'}${rules.nicknameMax || 12}文字まで（空なら「名無し」）</p>
       </div>
 
       <div class="card">
@@ -748,6 +774,7 @@ h1 small {
       fbArea.innerHTML = `
         <div class="why-box">
           <b>${isCorrect ? '⭕ 正解！' : '❌ 不正解...'}</b>
+          ${q.whyImg ? `<div class="q-media"><img src="img/${esc(q.whyImg)}" alt=""></div>` : ''}
           ${esc(q.why)}
         </div>
         <button class="btn go" id="btn-next" style="margin-top:12px">つぎへ →</button>
@@ -789,6 +816,7 @@ h1 small {
       fbArea.innerHTML = `
         <div class="why-box">
           <b style="color:var(--red)">⏰ 時間切れ！（不正解）</b>
+          ${q.whyImg ? `<div class="q-media"><img src="img/${esc(q.whyImg)}" alt=""></div>` : ''}
           ${esc(q.why)}
         </div>
         <button class="btn go" id="btn-next" style="margin-top:12px">つぎへ →</button>
@@ -879,6 +907,7 @@ h1 small {
         ${promo.url ? `<a href="${esc(promo.url)}" target="_blank" rel="noopener">くわしくはホームページへ →</a>` : ''}
       </div>
 
+      <button class="btn sub" id="btn-res-review">答えあわせ（解説）を見る</button>
       <button class="btn navy" id="btn-res-ranking">ランキングを見る</button>
       ${isKiosk ? '<button class="btn go" id="btn-res-next">次の人へ</button>' : '<button class="btn sub" id="btn-res-retry">もう一回（練習）</button>'}
       <p class="foot">青少年育成プラザ Miacis（ニコリ地下1階）アフター６</p>
@@ -886,6 +915,7 @@ h1 small {
     window.scrollTo(0, 0);
 
     $('#btn-res-ranking').onclick = () => renderRanking();
+    $('#btn-res-review').onclick = () => renderReview();
     if ($('#btn-res-retry')) $('#btn-res-retry').onclick = () => startQuiz(true);
     if ($('#btn-res-next')) $('#btn-res-next').onclick = () => { nickname = ''; try { localStorage.removeItem('quiz.name'); } catch (e) {} renderStart(); };
 
@@ -957,6 +987,42 @@ h1 small {
         }));
       } catch (e) {}
     }
+  }
+
+  // ------------------ 答えあわせ（全問の解説） ------------------
+  function renderReview() {
+    if (pollIntervalId) { clearInterval(pollIntervalId); pollIntervalId = null; }
+    let list = answers;
+    if (demo === 'review' && !list.length) {
+      list = questions.map((q, k) => ({ i: q.origQuizIndex, pick: k % 3 === 1 ? (q.a + 1) % 4 : q.a, ms: 3000 + k * 400 }));
+    }
+    const items = list.map((a, k) => {
+      const q = questions.find(item => item.origQuizIndex === a.i);
+      if (!q) return '';
+      const ok = a.pick === q.a;
+      const mine = a.pick == null ? '時間切れ' : q.opts[a.pick].t;
+      return `
+        <div class="card" style="border-color:${ok ? '#2a9d5c' : 'var(--red)'}">
+          <div class="num">Q${k + 1} ${ok ? '⭕ 正解' : '❌ 不正解'}</div>
+          <div style="font-weight:800;font-size:17px;margin:4px 0 8px">${esc(q.q)}</div>
+          ${q.img ? `<div class="q-media"><img src="img/${esc(q.img)}" alt=""></div>` : ''}
+          ${q.whyImg ? `<div class="q-media"><img src="img/${esc(q.whyImg)}" alt=""></div>` : ''}
+          <div style="font-size:14px;margin-bottom:4px">答え：<b>${esc(q.opts[q.a].t)}</b>${ok ? '' : `　／　君の答え：${esc(mine)}`}</div>
+          <div style="font-size:14px;color:#333">${esc(q.why)}</div>
+        </div>`;
+    }).join('');
+    $('#app').innerHTML = `
+      <h1><small>アフター６</small>答えあわせ</h1>
+      <p class="sub-title">${esc(window.QUIZ.sub)}</p>
+      ${items || '<p class="notice">まだ答えていません</p>'}
+      <button class="btn navy" id="btn-rev-ranking">ランキングを見る</button>
+      ${isKiosk ? '<button class="btn go" id="btn-rev-next">次の人へ</button>' : '<button class="btn sub" id="btn-rev-start">スタートに戻る</button>'}
+      <p class="foot">青少年育成プラザ Miacis（ニコリ地下1階）アフター６</p>
+    `;
+    window.scrollTo(0, 0);
+    $('#btn-rev-ranking').onclick = () => renderRanking();
+    if ($('#btn-rev-next')) $('#btn-rev-next').onclick = () => { nickname = ''; try { localStorage.removeItem('quiz.name'); } catch (e) {} renderStart(); };
+    if ($('#btn-rev-start')) $('#btn-rev-start').onclick = () => renderStart();
   }
 
   // ------------------ ランキング画面 ------------------
@@ -1189,6 +1255,7 @@ h1 small {
 
   // 初期化振り分け
   initQuestions();
+  await initLine();
 
   if (isStaff) {
     renderStaff();
@@ -1200,6 +1267,8 @@ h1 small {
     renderResult();
   } else if (demo === 'ranking') {
     renderRanking();
+  } else if (demo === 'review') {
+    renderReview();
   } else {
     // demo === 'start' または通常起動
     renderStart();

@@ -23,6 +23,8 @@
 - **個人情報を持たない。** 保存するのはニックネーム・正解数・合計時間・答えた選択肢・端末ID（乱数）だけ。本名・学校名・学年は集めない。画面で「本名はやめよう」と言う
 - 画面はビルドなし。素の HTML/CSS/JS（ES2020 まで）。`supabase-js` は使わず `fetch` で REST（`/rest/v1/rpc/...`・`/rest/v1/nirasaki_quiz_ranking`）を叩く（ヘッダ `apikey` と `Authorization: Bearer <anon key>`）
 - Supabase に届かないときも遊べる。結果は localStorage に残し、画面に「受付でこの画面を見せてね」と出す
+- **LINE から入る道**: `?line=1` 付きの URL を LIFF の endpoint にする（`docs/config.js` の `LIFF_ID`。空なら無効）。LINE の表示名をニックネームに入れておき（変えてよい）、端末IDは LINE の userId の SHA-256 から作る（userId そのものは保存しない）。順位はタブレット・スマホと同じ表に入る
+- 答えたあとの解説は `rules.feedbackMs`（4秒。「つぎへ」で早く進める）。答えが分かる写真は `whyImg` に置き、解説と「答えあわせ」画面だけで見せる
 - 順位に入るのは端末ごとに1回目だけ（DB 側の view がそう作ってある）。2回目以降は「練習」と表示する。**館内のタブレットで順番に遊ぶときは `?kiosk=1`**（1回ごとに別の端末ID・「次の人へ」で名前を消す・ネットに届かないときはその端末の記録で順位を出す）
 - 選択肢は毎回シャッフルする。正解は `data.js` の `a`（元の並びの番号）
 - 文字は日本語。中高生向けに短く。色とタイル（枠3px・影4px）は `~/code/miacis-yaritai/docs/index.html` と同じ系統（紺 #1e2088・赤 #e8461e・黄 #ede52e・紙 #f6f4ea）

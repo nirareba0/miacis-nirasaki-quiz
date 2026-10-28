@@ -12,7 +12,7 @@ const out = resolve(root, 'out')
 mkdirSync(out, { recursive: true })
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-const APP_URL = 'LINE で開く（公式LINE のミアキス クイズ）'
+const APP_URL = 'nirareba0.github.io/miacis-nirasaki-quiz'
 
 // data.js からクイズ情報と文言を読む
 const window = {}; eval(readFileSync(resolve(root, 'docs/data.js'), 'utf8')); const QUIZ = window.QUIZ
@@ -369,7 +369,7 @@ body {
     </div>
     <div class="qr">
       <div class="box">${svg('qr-app.svg')}</div>
-      <b>ここから挑戦（LINE）</b>
+      <b>ここから挑戦</b>
       <small>${APP_URL}</small>
     </div>
   </div>

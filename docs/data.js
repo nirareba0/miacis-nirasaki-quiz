@@ -1,6 +1,7 @@
 // 韮崎クイズ（アフター６・毎日イベント）の問題と、画面に出す文言。2026-10-28 Claude 下書き。
 // **問題は本人のチェック前。** 直すのはこのファイルだけ（画面もチラシもここを読む）。
-// 各問: q=問題文, opts=4択（t=文字, e=絵文字（任意。タイルに大きく出す）, img=画像パス（任意。docs/img/ に置く。あれば絵文字より優先））,
+// 各問: q=問題文, img=問題と一緒に見せる画像（任意）, whyImg=答えたあとの解説で見せる画像（任意。答えが分かる写真はこちら）,
+//       opts=4択（t=文字, e=絵文字（任意。タイルに大きく出す）, img=画像パス（任意。docs/img/ に置く。あれば絵文字より優先））,
 //       a=正解の番号（0〜3）, why=答えたあとに1行で出す解説, src=出典（画面には出さない）, hold=true なら出さない（候補として残すだけ）
 // 画面では選択肢の並びを毎回シャッフルする（隣の人の画面を写せないように）。
 window.QUIZ = {
@@ -8,7 +9,7 @@ window.QUIZ = {
   sub: '韮崎のこと、どれだけ知ってる？',
   rules: {
     perQuestionMs: 10000,   // 1問の制限時間（オールスター感謝祭と同じ10秒）。時間切れは不正解
-    feedbackMs: 1800,       // 正解・不正解を見せる時間
+    feedbackMs: 4000,       // 正解・不正解と解説を見せる時間（「つぎへ」で早く進める。順位の時間には数えない）
     count: 10,              // 出す問題数（hold でないものの先頭から）
     nicknameMax: 12,
   },
@@ -57,7 +58,7 @@ window.QUIZ = {
       opts: [{ t: 'SASAKI NICORI（ササキニコリ）' }, { t: 'NICORI（ニコリ）' }, { t: 'NIYARI（ニヤリ）' }, { t: 'NIKKORI（ニッコリ）' }], a: 0,
       why: '2026年9月1日から「韮崎市民交流センター SASAKI NICORI」。市と株式会社ササキのパートナーシップ協定（ネーミングライツ・5年間）で愛称が変わった。',
       src: 'https://www.nirasaki-nicori.jp/nicori/ と https://www.city.nirasaki.lg.jp/shiseijoho/shiminkatsudo/4809.html' },
-    { q: 'この花が韮崎市の「市の花」。名前は？', img: 'rengetsutsuji.jpg',
+    { q: '韮崎市の「市の花」は？', whyImg: 'rengetsutsuji.jpg',
       opts: [{ t: 'レンゲツツジ', e: '🌺' }, { t: 'ヒマワリ', e: '🌻' }, { t: 'バラ', e: '🌹' }, { t: 'コスモス', e: '🌼' }], a: 0,
       why: 'レンゲツツジ（2009年制定）。市の木はサクラ、市の鳥はチョウゲンボウ。',
       src: 'https://www.city.nirasaki.lg.jp/soshikiichiran/zaimuseisakuka/seisakutyouseitanto/1/1492.html（市章・市の木・市の花・市の鳥）' },
