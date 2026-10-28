@@ -510,10 +510,12 @@ h1 small {
     } catch (e) { console.warn('LINE login skipped', e); }
   }
 
-  // 今日の記録
-  function getDoneRecord() {
+  // 今日の記録（名前ごと。名前を変えれば別の人として順位に入る。同じ名前の2回目は練習）
+  const normName = n => String(n || '名無し').trim().toLowerCase() || '名無し';
+  const doneKey = (n) => `quiz.done.${event}.${normName(n)}`;
+  function getDoneRecord(name = nickname) {
     try {
-      const v = localStorage.getItem(`quiz.done.${event}`);
+      const v = localStorage.getItem(doneKey(name));
       return v ? JSON.parse(v) : null;
     } catch (e) {
       return null;
@@ -569,7 +571,7 @@ h1 small {
     const prizes = (window.QUIZ && window.QUIZ.prizes) || [];
 
     const doneHtml = done ? `
-      <div class="card" style="background:#fffbe6;border-color:var(--navy)">
+      <div class="card" id="done-banner" style="background:#fffbe6;border-color:var(--navy)">
         <p style="font-weight:800;color:var(--navy);margin:0 0 4px">今日はもう順位に入っています（${esc(done.rank)}位 / ${esc(done.entries)}人）</p>
         <p style="font-size:13.5px;margin:0">もう一回挑戦するときは<b>「練習」</b>（順位は更新されません）になります。</p>
       </div>
@@ -627,6 +629,17 @@ h1 small {
       try { localStorage.setItem('quiz.name', nickname); } catch (e) {}
     }
 
+    // 名前を打ち替えたら、その名前で今日もう遊んだかを見直す（表示だけ。判定は結果画面で同じ関数を使う）
+    const nickEl = $('#nick-input');
+    if (nickEl && !isKiosk) {
+      nickEl.addEventListener('input', () => {
+        const d = getDoneRecord(nickEl.value);
+        const b = $('#done-banner');
+        if (b) b.style.display = d ? '' : 'none';
+        const st = $('#btn-start');
+        if (st) st.textContent = d ? 'この名前は今日もう順位に入っています（練習でやる）' : 'スタート！';
+      });
+    }
     if ($('#btn-start')) {
       $('#btn-start').onclick = () => { saveNick(); startQuiz(false); };
     }
@@ -869,7 +882,8 @@ h1 small {
 
     const doneBefore = isKiosk ? null : getDoneRecord();
     const isPractice = Boolean(doneBefore) && demo !== 'result';
-    const playDevice = isKiosk ? makeUuid() : deviceId;   // タブレットは1回ごとに別の端末ID
+    // 端末ID: タブレットは1回ごとに別、LINE は LINE のアカウントごと、ふつうのスマホは「端末×名前」ごと（名前を変えれば新しい人として挑戦できる）
+    const playDevice = isKiosk ? makeUuid() : (viaLine ? deviceId : await uuidFromString(deviceId + ':' + normName(nickname)));
     if (demo !== 'result' && !isPractice) addLocalResult({ nickname: nickname || '名無し', correct: correctCount, total_ms: totalMs, at: new Date().toISOString() });
 
     $('#app').innerHTML = `
@@ -958,7 +972,7 @@ h1 small {
       if (data && data.first) {
         rankEl.textContent = `いま ${data.rank}位 / ${data.entries}人`;
         try {
-          if (!isKiosk) localStorage.setItem(`quiz.done.${event}`, JSON.stringify({
+          if (!isKiosk) localStorage.setItem(doneKey(nickname), JSON.stringify({
             rank: data.rank,
             entries: data.entries,
             correct: correctCount,
