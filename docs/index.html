@@ -1,0 +1,1210 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>韮崎クイズ — アフター６</title>
+<meta name="description" content="韮崎市の中高生の居場所 Miacis の毎日イベント「アフター６」韮崎クイズ">
+<style>
+:root {
+  --navy: #1e2088;
+  --red: #e8461e;
+  --yellow: #ede52e;
+  --ink: #15151a;
+  --bg: #f6f4ea;
+  --panel: #ffffff;
+  --line: #d9d6c8;
+  --green: #1fa85b;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  line-height: 1.6;
+  touch-action: manipulation;
+}
+.wrap {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+}
+body.demo .wrap {
+  width: 390px;
+  max-width: 100%;
+  margin: 0;
+}
+h1 {
+  font-size: 26px;
+  line-height: 1.25;
+  margin: 8px 0 4px;
+  color: var(--navy);
+  letter-spacing: .01em;
+}
+h1 small {
+  display: block;
+  font-size: 13px;
+  color: var(--red);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.sub-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+.card {
+  background: var(--panel);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 12px 0;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.q-title {
+  font-size: 19px;
+  font-weight: 800;
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+.q-media {
+  text-align: center;
+  margin: 8px 0 12px;
+}
+.q-media img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  border: 2px solid var(--ink);
+}
+.num-label {
+  font-size: 13px;
+  color: var(--red);
+  font-weight: 800;
+  letter-spacing: .05em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.timer-bar {
+  height: 10px;
+  background: #e4e1d3;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 6px 0 14px;
+}
+.timer-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--navy);
+  width: 100%;
+  transition: width 0.1s linear, background-color 0.2s;
+}
+.timer-bar-fill.danger {
+  background: var(--red);
+}
+.opts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 14px 0 10px;
+}
+.opt-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 110px;
+  padding: 12px 8px;
+  background: var(--panel);
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  font: inherit;
+  text-align: center;
+  transition: transform .05s, box-shadow .05s;
+}
+.opt-btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+.opt-btn:disabled {
+  cursor: default;
+}
+.opt-emoji {
+  font-size: 36px;
+  line-height: 1.1;
+  margin-bottom: 6px;
+  display: block;
+}
+.opt-img {
+  max-width: 100%;
+  max-height: 54px;
+  object-fit: contain;
+  margin-bottom: 6px;
+}
+.opt-text {
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.opt-text-only {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.opt-btn.correct {
+  background: var(--green) !important;
+  border-color: var(--ink) !important;
+  color: #fff !important;
+}
+.opt-btn.correct .opt-text,
+.opt-btn.correct .opt-text-only {
+  color: #fff !important;
+}
+.opt-btn.wrong {
+  background: var(--red) !important;
+  border-color: var(--ink) !important;
+  color: #fff !important;
+}
+.opt-btn.wrong .opt-text,
+.opt-btn.wrong .opt-text-only {
+  color: #fff !important;
+}
+
+.why-box {
+  background: #fdfdf9;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  padding: 12px;
+  margin: 14px 0 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.why-box b {
+  color: var(--navy);
+  display: block;
+  margin-bottom: 4px;
+}
+.btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 800;
+  padding: 13px 16px;
+  margin: 10px 0;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  text-decoration: none;
+}
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+.btn.go {
+  background: var(--red);
+  color: #fff;
+}
+.btn.sub {
+  background: var(--yellow);
+  color: var(--ink);
+}
+.btn.navy {
+  background: var(--navy);
+  color: #fff;
+}
+.input-text {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 10px 12px;
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  margin-top: 4px;
+}
+.rule-list {
+  padding-left: 20px;
+  margin: 8px 0;
+  font-size: 14px;
+}
+.rule-list li {
+  margin-bottom: 4px;
+}
+.prize-box {
+  background: #fffbe6;
+  border: 2px dashed var(--ink);
+  border-radius: 10px;
+  padding: 12px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+.prize-box b {
+  color: var(--red);
+  display: block;
+  margin-bottom: 4px;
+}
+.notice {
+  font-size: 12.5px;
+  color: #666;
+  margin: 4px 0 0;
+}
+.big-stat-row {
+  display: flex;
+  gap: 12px;
+  margin: 12px 0 16px;
+}
+.stat-box {
+  flex: 1;
+  background: #fdfdf9;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.stat-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #666;
+}
+.stat-val {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--navy);
+  margin-top: 2px;
+}
+.rank-callout {
+  background: var(--yellow);
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 900;
+  margin: 12px 0;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.next-card {
+  background: var(--navy);
+  color: #fff;
+  border: 3px solid var(--navy);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 14px 0;
+  box-shadow: 4px 4px 0 var(--red);
+}
+.next-card h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  color: var(--yellow);
+}
+.next-card p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+.next-card a {
+  color: #fff;
+  display: inline-block;
+  margin-top: 8px;
+  font-weight: 700;
+  text-decoration: underline;
+}
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+  font-size: 14px;
+}
+.ranking-table th, .ranking-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+.ranking-table th {
+  font-weight: 800;
+  color: #555;
+  font-size: 12px;
+}
+.ranking-table tr.me {
+  background: #fff8d6;
+  font-weight: 700;
+}
+.rank-num {
+  font-weight: 900;
+  font-size: 16px;
+  display: inline-block;
+  min-width: 24px;
+  text-align: center;
+}
+.badge-me {
+  background: var(--navy);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity .2s;
+  pointer-events: none;
+  z-index: 999;
+}
+.toast.on { opacity: 1; }
+.foot {
+  font-size: 12px;
+  color: #666;
+  margin-top: 24px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script src="config.js"></script>
+<script>
+(function() {
+  const $ = s => document.querySelector(s);
+  // uuid v4（DB の端末IDは uuid 型。randomUUID が無い古いブラウザでも uuid の形にする）
+  function makeUuid() {
+    if (crypto.randomUUID) return crypto.randomUUID();
+    const b = crypto.getRandomValues(new Uint8Array(16));
+    b[6] = (b[6] & 0x0f) | 0x40; b[8] = (b[8] & 0x3f) | 0x80;
+    const h = [...b].map(x => x.toString(16).padStart(2, '0')).join('');
+    return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+  }
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  function toast(msg) {
+    const el = $('#toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add('on');
+    setTimeout(() => el.classList.remove('on'), 2500);
+  }
+
+  // JST の YYYY-MM-DD
+  function getTodayJST() {
+    const d = new Date();
+    const formatter = new Intl.DateTimeFormat('ja-JP', {
+      timeZone: 'Asia/Tokyo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    const parts = formatter.formatToParts(d);
+    const y = parts.find(p => p.type === 'year').value;
+    const m = parts.find(p => p.type === 'month').value;
+    const day = parts.find(p => p.type === 'day').value;
+    return `${y}-${m}-${day}`;
+  }
+
+  const params = new URLSearchParams(location.search);
+  const pEvent = params.get('event');
+  const event = (pEvent && /^[a-zA-Z0-9-]+$/.test(pEvent)) ? pEvent : getTodayJST();
+  const demo = params.get('demo'); // 'start' | 'q' | 'feedback' | 'result' | 'ranking' | 'staff'
+  if (demo) document.body.classList.add('demo');
+  const isStaff = params.get('staff') === '1' || demo === 'staff';
+  // 館内のタブレットを何人かで順番に使うモード。1回ごとに別の端末IDで送り、「今日はもう遊んだ」を覚えない
+  const isKiosk = params.get('kiosk') === '1';
+
+  // 端末ID
+  let deviceId = '';
+  try {
+    deviceId = localStorage.getItem('quiz.device');
+    if (!deviceId) {
+      deviceId = makeUuid();
+      localStorage.setItem('quiz.device', deviceId);
+    }
+  } catch (e) {
+    deviceId = makeUuid();   // 保存できなくても、この回だけはこの uuid で送る
+  }
+
+  // ニックネーム
+  let nickname = '';
+  try {
+    nickname = localStorage.getItem('quiz.name') || '';
+  } catch (e) {}
+
+  // この端末で遊んだ今日の記録（ネットに届かないときの順位用。順位の決め方はサーバーと同じ）
+  function addLocalResult(rec) {
+    try {
+      const key = `quiz.local.${event}`;
+      const list = JSON.parse(localStorage.getItem(key) || '[]');
+      list.push(rec);
+      localStorage.setItem(key, JSON.stringify(list.slice(-300)));
+    } catch (e) {}
+  }
+  function getLocalRanking() {
+    let list = [];
+    try { list = JSON.parse(localStorage.getItem(`quiz.local.${event}`) || '[]'); } catch (e) {}
+    list.sort((a, b) => (b.correct - a.correct) || (a.total_ms - b.total_ms) || (a.at < b.at ? -1 : 1));
+    return list.map((r, i) => ({ ...r, rank: i + 1, entries: list.length }));
+  }
+
+  // 送れなかった今日の記録（受付で見せる用）
+  function getPendingRecord() {
+    try { const v = localStorage.getItem(`quiz.pending.${event}`); return v ? JSON.parse(v) : null; } catch (e) { return null; }
+  }
+
+  // 今日の記録
+  function getDoneRecord() {
+    try {
+      const v = localStorage.getItem(`quiz.done.${event}`);
+      return v ? JSON.parse(v) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function formatMs(ms) {
+    const s = Math.max(0, ms) / 1000;
+    const m = Math.floor(s / 60);
+    const remSec = (s % 60).toFixed(1);
+    return m > 0 ? `${m}分${remSec}秒` : `${remSec}秒`;
+  }
+
+  // 状態
+  let questions = [];
+  let currentIdx = 0;
+  let answers = []; // [{ i, pick, ms }]
+  let timerId = null;
+  let autoNextId = null;
+  let answered = false;    // この問題はもう答えた（タップ・時間切れ）
+  let advancing = false;   // 次の問題へ移る途中（二重遷移を防ぐ）
+  let submitting = false;  // 結果の送信中（二重送信を防ぐ）
+  let questionStartTime = 0;
+  let currentShuffledOpts = [];
+  let pollIntervalId = null;
+
+  function initQuestions() {
+    const raw = (window.QUIZ && window.QUIZ.questions) || [];
+    const count = (window.QUIZ && window.QUIZ.rules && window.QUIZ.rules.count) || 10;
+    const active = [];
+    raw.forEach((q, originalIdx) => {
+      if (!q.hold) {
+        active.push({ ...q, origQuizIndex: originalIdx });
+      }
+    });
+    questions = active.slice(0, count);
+  }
+
+  function startQuiz(isPractice) {
+    initQuestions();
+    currentIdx = 0;
+    answers = [];
+    renderQuestion(0);
+  }
+
+  // ------------------ スタート画面 ------------------
+  function renderStart() {
+    if (pollIntervalId) { clearInterval(pollIntervalId); pollIntervalId = null; }
+    const done = isKiosk ? null : getDoneRecord();
+    const rules = (window.QUIZ && window.QUIZ.rules) || { perQuestionMs: 20000, nicknameMax: 12 };
+    const perSec = Math.round((rules.perQuestionMs || 20000) / 1000);
+    const rankingRules = (window.QUIZ && window.QUIZ.ranking) || [];
+    const prizes = (window.QUIZ && window.QUIZ.prizes) || [];
+
+    const doneHtml = done ? `
+      <div class="card" style="background:#fffbe6;border-color:var(--navy)">
+        <p style="font-weight:800;color:var(--navy);margin:0 0 4px">今日はもう順位に入っています（${esc(done.rank)}位 / ${esc(done.entries)}人）</p>
+        <p style="font-size:13.5px;margin:0">もう一回挑戦するときは<b>「練習」</b>（順位は更新されません）になります。</p>
+      </div>
+    ` : '';
+
+    const nickVal = nickname || (done ? done.nickname : '');
+    const pending = (!done && !isKiosk) ? getPendingRecord() : null;
+    const pendingHtml = pending ? `
+      <div class="card" style="background:#ffd8d8;border-color:var(--red)">
+        <p style="font-weight:800;color:var(--red);margin:0 0 4px">送れなかった記録があります</p>
+        <p style="font-size:14px;margin:0">${esc(pending.nickname)}：正解 <b>${esc(pending.correct)}</b> ／ 合計 <b>${esc(formatMs(pending.total_ms))}</b>。<b>受付でこの画面を見せてね</b>（受付で手入力します）</p>
+      </div>
+    ` : '';
+
+    $('#app').innerHTML = `
+      <h1><small>アフター６・毎日イベント</small>${esc(window.QUIZ.title)}</h1>
+      <p class="sub-title">${esc(window.QUIZ.sub)}</p>
+
+      ${doneHtml}${pendingHtml}
+
+      <div class="card">
+        <label style="font-weight:800;font-size:14px;display:block" for="nick-input">ニックネーム</label>
+        <input type="text" id="nick-input" class="input-text" maxlength="${rules.nicknameMax || 12}" placeholder="例：にら丸" value="${esc(nickVal)}">
+        <p class="notice">本名はやめよう。${rules.nicknameMax || 12}文字まで（空なら「名無し」）</p>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:800;font-size:15px;color:var(--navy);margin-bottom:6px">ルール</div>
+        <ul class="rule-list">
+          ${rankingRules.map(r => `<li>${esc(r)}</li>`).join('')}
+          <li>1問 ${perSec}秒（時間切れは不正解）</li>
+        </ul>
+
+        <div class="prize-box">
+          <b>🎁 景品</b>
+          ${prizes.map(p => `<div>・${esc(p)}</div>`).join('')}
+        </div>
+      </div>
+
+      ${done ? `
+        <button class="btn go" id="btn-start-practice">練習でやる</button>
+        <button class="btn sub" id="btn-to-ranking">ランキングを見る</button>
+      ` : `
+        <button class="btn go" id="btn-start">スタート！</button>
+        <button class="btn sub" id="btn-to-ranking">今日のランキングを見る</button>
+      `}
+      <p class="foot">青少年育成プラザ Miacis（ニコリ地下1階）アフター６</p>
+    `;
+    window.scrollTo(0, 0);
+
+    const nickInput = $('#nick-input');
+    function saveNick() {
+      const v = nickInput.value.trim();
+      nickname = v || '名無し';
+      try { localStorage.setItem('quiz.name', nickname); } catch (e) {}
+    }
+
+    if ($('#btn-start')) {
+      $('#btn-start').onclick = () => { saveNick(); startQuiz(false); };
+    }
+    if ($('#btn-start-practice')) {
+      $('#btn-start-practice').onclick = () => { saveNick(); startQuiz(true); };
+    }
+    if ($('#btn-to-ranking')) {
+      $('#btn-to-ranking').onclick = () => renderRanking();
+    }
+  }
+
+  // ------------------ 問題画面 ------------------
+  function renderQuestion(idx) {
+    if (pollIntervalId) { clearInterval(pollIntervalId); pollIntervalId = null; }
+    if (timerId) { clearInterval(timerId); timerId = null; }
+    if (autoNextId) { clearTimeout(autoNextId); autoNextId = null; }
+
+    currentIdx = idx;
+    answered = false; advancing = false;
+    const q = questions[idx];
+    const rules = (window.QUIZ && window.QUIZ.rules) || { perQuestionMs: 20000, feedbackMs: 1800 };
+    const perMs = rules.perQuestionMs || 20000;
+    const totalCount = questions.length;
+
+    // 選択肢のシャッフル（demo=q または demo=feedback のときはシャッフルしない）
+    let optsWithOrig = q.opts.map((opt, origI) => ({ ...opt, origI }));
+    if (demo === 'q' || demo === 'feedback') {
+      currentShuffledOpts = optsWithOrig;
+    } else {
+      for (let k = optsWithOrig.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [optsWithOrig[k], optsWithOrig[j]] = [optsWithOrig[j], optsWithOrig[k]]; }
+      currentShuffledOpts = optsWithOrig;
+    }
+
+    let mediaHtml = '';
+    if (q.img) {
+      mediaHtml = `<div class="q-media"><img src="img/${esc(q.img)}" alt=""></div>`;
+    }
+
+    $('#app').innerHTML = `
+      <div class="num-label">
+        <span>Q${idx + 1} / ${totalCount}</span>
+        <span id="timer-text">${Math.ceil(perMs / 1000)}秒</span>
+      </div>
+      <div class="timer-bar">
+        <i class="timer-bar-fill" id="timer-bar-fill" style="width:100%"></i>
+      </div>
+      <div class="card">
+        <div class="q-title">${esc(q.q)}</div>
+        ${mediaHtml}
+        <div class="opts-grid" id="opts-grid">
+          ${currentShuffledOpts.map((opt, pos) => {
+            let inner = '';
+            if (opt.img) {
+              inner = `<img class="opt-img" src="img/${esc(opt.img)}" alt=""><span class="opt-text">${esc(opt.t)}</span>`;
+            } else if (opt.e) {
+              inner = `<span class="opt-emoji">${esc(opt.e)}</span><span class="opt-text">${esc(opt.t)}</span>`;
+            } else {
+              inner = `<span class="opt-text-only">${esc(opt.t)}</span>`;
+            }
+            return `<button class="opt-btn" data-pos="${pos}">${inner}</button>`;
+          }).join('')}
+        </div>
+        <div id="feedback-area"></div>
+      </div>
+    `;
+    window.scrollTo(0, 0);
+
+    questionStartTime = Date.now();
+
+    // デモ表示判定
+    if (demo === 'q') {
+      return; // タイマー停止・待機
+    }
+    if (demo === 'feedback') {
+      // 第1問で正解を押した直後の状態を静的に描画（タイマー停止）
+      onPick(q.a, true);
+      return;
+    }
+
+    // タイマー開始
+    const fillEl = $('#timer-bar-fill');
+    const timerTextEl = $('#timer-text');
+    timerId = setInterval(() => {
+      const elapsed = Date.now() - questionStartTime;
+      const remain = Math.max(0, perMs - elapsed);
+      const pct = (remain / perMs) * 100;
+      if (fillEl) {
+        fillEl.style.width = pct + '%';
+        if (remain <= 3000) fillEl.classList.add('danger');
+      }
+      if (timerTextEl) {
+        timerTextEl.textContent = Math.ceil(remain / 1000) + '秒';
+      }
+      if (remain <= 0) {
+        clearInterval(timerId);
+        timerId = null;
+        onTimeout();
+      }
+    }, 50);
+
+    // 選択肢タップ
+    const buttons = document.querySelectorAll('.opt-btn');
+    buttons.forEach(btn => {
+      btn.onclick = () => {
+        const pos = parseInt(btn.getAttribute('data-pos'), 10);
+        onPick(pos, false);
+      };
+    });
+  }
+
+  function onPick(pickedPos, isDemoFeedback) {
+    if (answered) return;
+    const q = questions[currentIdx];
+    const rules = (window.QUIZ && window.QUIZ.rules) || { perQuestionMs: 20000, feedbackMs: 1800 };
+    const perMs = rules.perQuestionMs || 20000;
+    // タイマーの刻み（50ms）より先に制限時間を過ぎていたら、タップは時間切れとして扱う
+    if (!isDemoFeedback && Date.now() - questionStartTime >= perMs) { onTimeout(); return; }
+    answered = true;
+    if (timerId) { clearInterval(timerId); timerId = null; }
+    const elapsed = isDemoFeedback ? 1800 : Math.min(perMs, Date.now() - questionStartTime);
+
+    const pickedOpt = currentShuffledOpts[pickedPos];
+    const pickedOrigI = pickedOpt.origI;
+    const isCorrect = pickedOrigI === q.a;
+
+    if (!isDemoFeedback) {
+      answers.push({ i: q.origQuizIndex, pick: pickedOrigI, ms: elapsed });
+    }
+
+    // ボタン無効化 & 色分け
+    const buttons = document.querySelectorAll('.opt-btn');
+    buttons.forEach((btn, pos) => {
+      btn.disabled = true;
+      const opt = currentShuffledOpts[pos];
+      if (opt.origI === q.a) {
+        btn.classList.add('correct');
+      } else if (pos === pickedPos && !isCorrect) {
+        btn.classList.add('wrong');
+      }
+    });
+
+    // フィードバック表示
+    const fbArea = $('#feedback-area');
+    if (fbArea) {
+      fbArea.innerHTML = `
+        <div class="why-box">
+          <b>${isCorrect ? '⭕ 正解！' : '❌ 不正解...'}</b>
+          ${esc(q.why)}
+        </div>
+        <button class="btn go" id="btn-next" style="margin-top:12px">つぎへ →</button>
+      `;
+      const nextBtn = $('#btn-next');
+      if (nextBtn) {
+        nextBtn.onclick = () => proceedNext();
+      }
+    }
+
+    if (!isDemoFeedback) {
+      autoNextId = setTimeout(() => {
+        proceedNext();
+      }, rules.feedbackMs || 1800);
+    }
+  }
+
+  function onTimeout() {
+    if (answered) return;
+    answered = true;
+    if (timerId) { clearInterval(timerId); timerId = null; }
+    const q = questions[currentIdx];
+    const rules = (window.QUIZ && window.QUIZ.rules) || { perQuestionMs: 20000, feedbackMs: 1800 };
+    const perMs = rules.perQuestionMs || 20000;
+
+    answers.push({ i: q.origQuizIndex, pick: null, ms: perMs });
+
+    const buttons = document.querySelectorAll('.opt-btn');
+    buttons.forEach((btn, pos) => {
+      btn.disabled = true;
+      const opt = currentShuffledOpts[pos];
+      if (opt.origI === q.a) {
+        btn.classList.add('correct');
+      }
+    });
+
+    const fbArea = $('#feedback-area');
+    if (fbArea) {
+      fbArea.innerHTML = `
+        <div class="why-box">
+          <b style="color:var(--red)">⏰ 時間切れ！（不正解）</b>
+          ${esc(q.why)}
+        </div>
+        <button class="btn go" id="btn-next" style="margin-top:12px">つぎへ →</button>
+      `;
+      const nextBtn = $('#btn-next');
+      if (nextBtn) {
+        nextBtn.onclick = () => proceedNext();
+      }
+    }
+
+    autoNextId = setTimeout(() => {
+      proceedNext();
+    }, rules.feedbackMs || 1800);
+  }
+
+  function proceedNext() {
+    if (advancing) return;
+    advancing = true;
+    if (autoNextId) { clearTimeout(autoNextId); autoNextId = null; }
+    if (currentIdx + 1 < questions.length) {
+      renderQuestion(currentIdx + 1);
+    } else {
+      renderResult();
+    }
+  }
+
+  // ------------------ 結果画面 ------------------
+  async function renderResult() {
+    if (pollIntervalId) { clearInterval(pollIntervalId); pollIntervalId = null; }
+    if (timerId) { clearInterval(timerId); timerId = null; }
+    if (autoNextId) { clearTimeout(autoNextId); autoNextId = null; }
+
+    const promo = (window.QUIZ && window.QUIZ.promo) || {};
+    const prizes = (window.QUIZ && window.QUIZ.prizes) || [];
+    const totalQuestions = questions.length || 10;
+
+    let correctCount = 0;
+    let totalMs = 0;
+
+    if (demo === 'result') {
+      correctCount = 7;
+      totalMs = 83210;
+    } else {
+      answers.forEach(a => {
+        const q = questions.find(item => item.origQuizIndex === a.i);
+        // オールスター感謝祭と同じ: 時間は正解した問題の回答時間だけを足す（不正解・時間切れは正解数で差がつく）
+        if (q && a.pick === q.a) { correctCount++; totalMs += a.ms; }
+      });
+    }
+
+    const doneBefore = isKiosk ? null : getDoneRecord();
+    const isPractice = Boolean(doneBefore) && demo !== 'result';
+    const playDevice = isKiosk ? makeUuid() : deviceId;   // タブレットは1回ごとに別の端末ID
+    if (demo !== 'result' && !isPractice) addLocalResult({ nickname: nickname || '名無し', correct: correctCount, total_ms: totalMs, at: new Date().toISOString() });
+
+    $('#app').innerHTML = `
+      <h1><small>アフター６</small>クイズ結果</h1>
+      <div class="card">
+        <div class="big-stat-row">
+          <div class="stat-box">
+            <div class="stat-label">正解数</div>
+            <div class="stat-val">${correctCount} / ${totalQuestions}</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">正解タイム</div>
+            <div class="stat-val" style="font-size:18px">${formatMs(totalMs)}</div>
+          </div>
+        </div>
+        <div id="rank-status" class="rank-callout">
+          ${demo === 'result' ? 'いま 3位 / 9人' : (isPractice ? '練習（順位には入りません）' : '記録中...')}
+        </div>
+        <p class="notice" id="submit-notice" style="text-align:center"></p>
+      </div>
+
+      <div class="card" style="background:#fffbe6;border-color:var(--navy)">
+        <b style="color:var(--red);font-size:15px;display:block;margin-bottom:4px">🎁 受付でお菓子をもらってね！</b>
+        <div style="font-size:14px">${esc(prizes[0] || '参加した人みんなにお菓子')}</div>
+      </div>
+
+      <div class="next-card">
+        <div style="font-size:13px;color:#fff;font-weight:700;margin-bottom:4px">${esc(promo.lead)}</div>
+        <h2>${esc(promo.title)}</h2>
+        <p>
+          <b>${esc(promo.date)}</b><br>
+          場所：${esc(promo.place)}<br>
+          ${esc(promo.note)}
+        </p>
+        ${promo.url ? `<a href="${esc(promo.url)}" target="_blank" rel="noopener">くわしくはホームページへ →</a>` : ''}
+      </div>
+
+      <button class="btn navy" id="btn-res-ranking">ランキングを見る</button>
+      ${isKiosk ? '<button class="btn go" id="btn-res-next">次の人へ</button>' : '<button class="btn sub" id="btn-res-retry">もう一回（練習）</button>'}
+      <p class="foot">青少年育成プラザ Miacis（ニコリ地下1階）アフター６</p>
+    `;
+    window.scrollTo(0, 0);
+
+    $('#btn-res-ranking').onclick = () => renderRanking();
+    if ($('#btn-res-retry')) $('#btn-res-retry').onclick = () => startQuiz(true);
+    if ($('#btn-res-next')) $('#btn-res-next').onclick = () => { nickname = ''; try { localStorage.removeItem('quiz.name'); } catch (e) {} renderStart(); };
+
+    // デモまたは練習の場合は送信しない
+    if (demo === 'result' || isPractice) {
+      return;
+    }
+
+    // 初回本番送信（1回だけ）
+    if (submitting) return;
+    submitting = true;
+    const rankEl = $('#rank-status');
+    const noticeEl = $('#submit-notice');
+    const cfg = window.QUIZ_CONFIG || {};
+
+    try {
+      const res = await fetch(`${cfg.SUPABASE_URL}/rest/v1/rpc/submit_nirasaki_quiz`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${cfg.SUPABASE_ANON_KEY}`
+        },
+        body: JSON.stringify({
+          p_event: event,
+          p_device: playDevice,
+          p_nickname: nickname || '名無し',
+          p_correct: correctCount,
+          p_total_ms: totalMs,
+          p_answers: answers,
+          p_source: 'app'
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error('HTTP ' + res.status);
+      }
+
+      const data = await res.json();
+      if (data && data.first) {
+        rankEl.textContent = `いま ${data.rank}位 / ${data.entries}人`;
+        try {
+          if (!isKiosk) localStorage.setItem(`quiz.done.${event}`, JSON.stringify({
+            rank: data.rank,
+            entries: data.entries,
+            correct: correctCount,
+            total_ms: totalMs,
+            nickname: nickname || '名無し',
+            at: new Date().toISOString()
+          }));
+        } catch (e) {}
+      } else {
+        rankEl.textContent = '練習（順位には入りません）';
+      }
+    } catch (err) {
+      console.warn('submit failed', err);
+      rankEl.textContent = '送れなかった';
+      rankEl.style.background = '#ffd8d8';
+      noticeEl.innerHTML = '送れなかった。<b>受付でこの画面を見せてね</b>';
+      try {
+        localStorage.setItem(`quiz.pending.${event}`, JSON.stringify({
+          event,
+          device: deviceId,
+          nickname: nickname || '名無し',
+          correct: correctCount,
+          total_ms: totalMs,
+          answers,
+          at: new Date().toISOString()
+        }));
+      } catch (e) {}
+    }
+  }
+
+  // ------------------ ランキング画面 ------------------
+  async function renderRanking() {
+    if (pollIntervalId) { clearInterval(pollIntervalId); pollIntervalId = null; }
+    if (timerId) { clearInterval(timerId); timerId = null; }
+    if (autoNextId) { clearTimeout(autoNextId); autoNextId = null; }
+
+    const done = getDoneRecord();
+
+    $('#app').innerHTML = `
+      <h1><small>アフター６・${esc(event)}</small>今日のランキング</h1>
+      <p class="notice" style="margin-bottom:12px">10秒ごとに自動更新されます（端末ごとの1回目だけ順位に入ります）</p>
+
+      <div class="card" id="ranking-container">
+        <div style="text-align:center;padding:16px;color:#666">読み込み中...</div>
+      </div>
+
+      <button class="btn sub" id="btn-back">戻る</button>
+      <p class="foot">青少年育成プラザ Miacis（ニコリ地下1階）アフター６</p>
+    `;
+    window.scrollTo(0, 0);
+
+    $('#btn-back').onclick = () => renderStart();
+
+    async function loadRanking() {
+      const container = $('#ranking-container');
+      if (!container) return;
+
+      if (demo === 'ranking') {
+        const sampleData = [
+          { rank: 1, nickname: 'たなか', correct: 10, total_ms: 45200 },
+          { rank: 2, nickname: 'にら丸', correct: 9, total_ms: 52100 },
+          { rank: 3, nickname: 'ゲスト', correct: 7, total_ms: 83210 },
+          { rank: 4, nickname: 'あおい', correct: 6, total_ms: 70500 },
+          { rank: 5, nickname: '名無し', correct: 5, total_ms: 105000 }
+        ];
+        renderRankingRows(sampleData, container, done);
+        return;
+      }
+
+      const cfg = window.QUIZ_CONFIG || {};
+      try {
+        const res = await fetch(`${cfg.SUPABASE_URL}/rest/v1/nirasaki_quiz_ranking?event=eq.${encodeURIComponent(event)}&order=rank.asc,created_at.asc&limit=100`, {
+          headers: {
+            'apikey': cfg.SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${cfg.SUPABASE_ANON_KEY}`
+          }
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const list = await res.json();
+        renderRankingRows(list, container, done);
+      } catch (e) {
+        const local = getLocalRanking();
+        if (local.length) {
+          container.innerHTML = '<p class="notice" style="margin:0 0 8px;color:var(--red);font-weight:700">ネットに届いていないので、この端末の記録だけ出しています</p><div id="ranking-local"></div>';
+          renderRankingRows(local, $('#ranking-local'), done);
+        } else {
+          container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--red);font-weight:700">いまは読めない（ネットワークを確認してね）</div>';
+        }
+      }
+    }
+
+    loadRanking();
+    if (demo !== 'ranking') {
+      pollIntervalId = setInterval(loadRanking, 10000);
+    }
+  }
+
+  function renderRankingRows(list, container, done) {
+    if (!list || list.length === 0) {
+      container.innerHTML = '<div style="text-align:center;padding:16px;color:#666">まだ今日の挑戦者はいません。一番乗りを目指そう！</div>';
+      return;
+    }
+
+    const rowsHtml = list.map((item, idx) => {
+      const rankNum = item.rank || (idx + 1);
+      const isMe = done && (
+        (done.rank === rankNum && done.nickname === item.nickname) ||
+        (done.nickname === item.nickname && done.correct === item.correct && Math.abs(done.total_ms - item.total_ms) < 2000)
+      );
+      const rankClass = rankNum === 1 ? 'top1' : (rankNum === 2 ? 'top2' : (rankNum === 3 ? 'top3' : ''));
+      return `
+        <tr class="${isMe ? 'me' : ''}">
+          <td><span class="rank-num ${rankClass}">${rankNum}</span></td>
+          <td><b>${esc(item.nickname)}</b>${isMe ? '<span class="badge-me">あなた</span>' : ''}</td>
+          <td>${item.correct}問</td>
+          <td style="text-align:right">${formatMs(item.total_ms)}</td>
+        </tr>
+      `;
+    }).join('');
+
+    container.innerHTML = `
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th style="width:40px">順位</th>
+            <th>ニックネーム</th>
+            <th style="width:55px">正解</th>
+            <th style="width:80px;text-align:right">タイム</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // ------------------ 受付画面 (?staff=1) ------------------
+  function renderStaff() {
+    if (pollIntervalId) { clearInterval(pollIntervalId); pollIntervalId = null; }
+    const rules = (window.QUIZ && window.QUIZ.rules) || { count: 10 };
+
+    $('#app').innerHTML = `
+      <h1><small>スタッフ専用</small>受付手入力（${esc(event)}）</h1>
+      <div class="card">
+        <div style="font-weight:800;font-size:16px;color:var(--navy);margin-bottom:8px">記録の手入力</div>
+        <div style="margin-bottom:10px">
+          <label style="font-size:13px;font-weight:700;display:block">ニックネーム</label>
+          <input type="text" id="staff-name" class="input-text" placeholder="例：にらまる" maxlength="12">
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:10px">
+          <div style="flex:1">
+            <label style="font-size:13px;font-weight:700;display:block">正解数（0〜${rules.count}）</label>
+            <input type="number" id="staff-correct" class="input-text" min="0" max="${rules.count}" value="${rules.count}">
+          </div>
+          <div style="flex:1">
+            <label style="font-size:13px;font-weight:700;display:block">正解タイム 秒（例: 45.2）</label>
+            <input type="number" id="staff-seconds" class="input-text" step="0.1" min="0" placeholder="秒">
+          </div>
+        </div>
+        <button class="btn go" id="btn-staff-submit">記録を追加する</button>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:800;font-size:16px;color:var(--navy);margin-bottom:8px">今日の結果一覧（全員）</div>
+        <div id="staff-ranking-container">
+          <div style="text-align:center;padding:12px;color:#666">読み込み中...</div>
+        </div>
+      </div>
+    `;
+    window.scrollTo(0, 0);
+
+    const sContainer = $('#staff-ranking-container');
+
+    async function loadStaffRanking() {
+      if (demo === 'staff') {
+        const sampleData = [
+          { rank: 1, nickname: 'たなか', correct: 10, total_ms: 45200 },
+          { rank: 2, nickname: 'にら丸', correct: 9, total_ms: 52100 },
+          { rank: 3, nickname: 'ゲスト', correct: 7, total_ms: 83210 },
+          { rank: 4, nickname: 'あおい', correct: 6, total_ms: 70500 },
+          { rank: 5, nickname: '名無し', correct: 5, total_ms: 105000 }
+        ];
+        renderRankingRows(sampleData, sContainer, null);
+        return;
+      }
+
+      const cfg = window.QUIZ_CONFIG || {};
+      try {
+        const res = await fetch(`${cfg.SUPABASE_URL}/rest/v1/nirasaki_quiz_ranking?event=eq.${encodeURIComponent(event)}&order=rank.asc,created_at.asc&limit=100`, {
+          headers: {
+            'apikey': cfg.SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${cfg.SUPABASE_ANON_KEY}`
+          }
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const list = await res.json();
+        renderRankingRows(list, sContainer, null);
+      } catch (e) {
+        sContainer.innerHTML = '<div style="text-align:center;padding:12px;color:var(--red)">読み込みエラー</div>';
+      }
+    }
+
+    loadStaffRanking();
+    if (demo !== 'staff') {
+      pollIntervalId = setInterval(loadStaffRanking, 10000);
+    }
+
+    $('#btn-staff-submit').onclick = async () => {
+      const name = $('#staff-name').value.trim() || '名無し';
+      const correct = parseInt($('#staff-correct').value, 10);
+      const sec = parseFloat($('#staff-seconds').value);
+
+      if (isNaN(correct) || correct < 0 || correct > rules.count) {
+        return toast('正解数を正しく入力してください');
+      }
+      if (isNaN(sec) || sec < 0) {
+        return toast('正解タイムを入力してください');
+      }
+
+      if (demo === 'staff') {
+        toast('デモモードのため送信しません');
+        return;
+      }
+
+      const totalMs = Math.round(sec * 1000);
+      const newDevId = makeUuid();
+      const cfg = window.QUIZ_CONFIG || {};
+
+      try {
+        const res = await fetch(`${cfg.SUPABASE_URL}/rest/v1/rpc/submit_nirasaki_quiz`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': cfg.SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${cfg.SUPABASE_ANON_KEY}`
+          },
+          body: JSON.stringify({
+            p_event: event,
+            p_device: newDevId,
+            p_nickname: name,
+            p_correct: correct,
+            p_total_ms: totalMs,
+            p_answers: [],
+            p_source: 'staff'
+          })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        toast('記録を追加しました！');
+        $('#staff-name').value = '';
+        $('#staff-seconds').value = '';
+        loadStaffRanking();
+      } catch (e) {
+        toast('送信に失敗しました');
+      }
+    };
+  }
+
+  // 初期化振り分け
+  initQuestions();
+
+  if (isStaff) {
+    renderStaff();
+  } else if (demo === 'q') {
+    renderQuestion(0);
+  } else if (demo === 'feedback') {
+    renderQuestion(0);
+  } else if (demo === 'result') {
+    renderResult();
+  } else if (demo === 'ranking') {
+    renderRanking();
+  } else {
+    // demo === 'start' または通常起動
+    renderStart();
+  }
+})();
+</script>
+</body>
+</html>

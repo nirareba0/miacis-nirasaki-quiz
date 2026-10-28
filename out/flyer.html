@@ -1,0 +1,395 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+@page { size: A4; margin: 0; }
+:root {
+  --navy: #1e2088;
+  --red: #e8461e;
+  --yellow: #ede52e;
+  --ink: #15151a;
+  --paper: #f6f4ea;
+  --dela: "Dela Gothic One", sans-serif;
+  --sans: "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--paper); }
+body {
+  font-family: var(--sans);
+  color: var(--ink);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.a4 {
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+  padding: 8mm 10mm 7mm;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.org {
+  display: flex;
+  align-items: center;
+  gap: 2.5mm;
+  font-weight: 900;
+  font-size: 9.5pt;
+  line-height: 1.3;
+}
+.org img { width: 13mm; }
+.org small { display: block; font-weight: 700; font-size: 7.5pt; color: #555; }
+.after6 { width: 44mm; display: block; }
+
+.hook {
+  margin-top: 5mm;
+  font-family: var(--dela);
+  font-size: 36pt;
+  line-height: 1.16;
+  white-space: pre-line;
+  color: var(--navy);
+  letter-spacing: -.01em;
+}
+
+.title {
+  margin-top: 4mm;
+  display: flex;
+  align-items: flex-end;
+  gap: 3.5mm;
+}
+.title .tag {
+  font-weight: 900;
+  font-size: 11pt;
+  background: var(--yellow);
+  border: 1.2mm solid var(--ink);
+  border-radius: 2mm;
+  padding: 1.2mm 3.5mm;
+  transform: rotate(-2deg);
+  white-space: nowrap;
+}
+.title b {
+  font-family: var(--dela);
+  font-weight: 400;
+  font-size: 31pt;
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+.row {
+  display: flex;
+  gap: 4.5mm;
+  margin-top: 4.5mm;
+  align-items: stretch;
+}
+.card {
+  flex: 1;
+  background: #fff;
+  border: 1.2mm solid var(--ink);
+  border-radius: 4mm;
+  padding: 3.5mm 4mm;
+  box-shadow: 2mm 2mm 0 var(--ink);
+  display: flex;
+  flex-direction: column;
+}
+.card .q-badge {
+  font-size: 9pt;
+  color: var(--red);
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+.card .qq {
+  font-size: 12.5pt;
+  font-weight: 900;
+  margin: 1.5mm 0 2.5mm;
+  line-height: 1.35;
+}
+.ex-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2mm;
+  margin: 1mm 0 2mm;
+}
+.ex-opt {
+  display: flex;
+  align-items: center;
+  gap: 1.5mm;
+  border: 0.8mm solid var(--ink);
+  border-radius: 2.5mm;
+  padding: 2mm 2.5mm;
+  background: #fff;
+  font-weight: 700;
+  font-size: 10pt;
+  box-shadow: 1mm 1mm 0 var(--ink);
+}
+.ex-emoji { font-size: 14pt; line-height: 1; }
+.ex-txt { line-height: 1.2; }
+.card .more {
+  margin-top: auto;
+  font-size: 8.5pt;
+  font-weight: 700;
+  color: #444;
+  line-height: 1.4;
+}
+
+.qr {
+  width: 54mm;
+  background: var(--red);
+  color: #fff;
+  border: 1.2mm solid var(--ink);
+  border-radius: 4mm;
+  padding: 3.5mm;
+  text-align: center;
+  box-shadow: 2mm 2mm 0 var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.qr .box {
+  width: 40mm;
+  height: 40mm;
+  background: #fff;
+  border-radius: 2.5mm;
+  padding: 2mm;
+}
+.qr b {
+  display: block;
+  font-size: 13.5pt;
+  font-weight: 900;
+  margin-top: 2mm;
+}
+.qr small {
+  display: block;
+  font-size: 6.8pt;
+  margin-top: 1.2mm;
+  white-space: nowrap;
+  letter-spacing: -.02em;
+  opacity: .95;
+}
+
+.prize-band {
+  margin-top: 4.5mm;
+  background: var(--yellow);
+  border: 1.2mm solid var(--ink);
+  border-radius: 4mm;
+  padding: 3.5mm 4.5mm;
+  box-shadow: 2mm 2mm 0 var(--ink);
+}
+.prize-title {
+  display: flex;
+  align-items: center;
+  gap: 2mm;
+  font-weight: 900;
+  font-size: 11pt;
+}
+.prize-tag {
+  background: var(--red);
+  color: #fff;
+  font-size: 8pt;
+  padding: 0.8mm 2.2mm;
+  border-radius: 1.2mm;
+}
+.prize-items {
+  font-size: 10.5pt;
+  font-weight: 800;
+  margin-top: 1.5mm;
+  display: flex;
+  flex-direction: column;
+  gap: 1mm;
+}
+.prize-items div {
+  display: flex;
+  align-items: center;
+  gap: 1.5mm;
+}
+.prize-rules {
+  margin-top: 2mm;
+  padding-top: 1.5mm;
+  border-top: 0.6mm dashed rgba(21,21,26,0.35);
+  font-size: 8pt;
+  font-weight: 700;
+  color: #333;
+}
+
+.promo-band {
+  margin-top: 4.5mm;
+  background: var(--navy);
+  color: #fff;
+  border: 1.2mm solid var(--navy);
+  border-radius: 4mm;
+  padding: 3.5mm 5mm;
+  display: flex;
+  gap: 4mm;
+  align-items: center;
+  box-shadow: 2mm 2mm 0 var(--red);
+}
+.promo-left {
+  flex: 1;
+}
+.promo-lead {
+  font-size: 8.5pt;
+  color: var(--yellow);
+  font-weight: 800;
+  margin-bottom: 0.5mm;
+}
+.promo-title {
+  font-family: var(--dela);
+  font-size: 16pt;
+  color: #fff;
+  line-height: 1.2;
+}
+.promo-date {
+  font-size: 10pt;
+  font-weight: 900;
+  color: var(--yellow);
+  margin-top: 1mm;
+}
+.promo-note {
+  font-size: 8pt;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-top: 1mm;
+  opacity: .95;
+}
+.promo-qr {
+  width: 25mm;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.promo-qr .box {
+  width: 20mm;
+  height: 20mm;
+  background: #fff;
+  border-radius: 1.5mm;
+  padding: 1.2mm;
+}
+.promo-qr small {
+  display: block;
+  font-size: 6.5pt;
+  font-weight: 800;
+  margin-top: 1mm;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.when {
+  margin-top: 4mm;
+  display: flex;
+  align-items: center;
+  gap: 4mm;
+  border: 1.2mm dashed var(--navy);
+  border-radius: 3.5mm;
+  padding: 2.5mm 4.5mm;
+  font-weight: 700;
+  font-size: 10pt;
+  line-height: 1.45;
+}
+.when .w {
+  font-family: var(--dela);
+  font-size: 16pt;
+  color: var(--navy);
+  white-space: nowrap;
+}
+
+.foot {
+  margin-top: auto;
+  font-size: 7pt;
+  color: #444;
+  line-height: 1.5;
+  border-top: 0.4mm solid #bbb;
+  padding-top: 1.8mm;
+}
+</style>
+</head>
+<body>
+<div class="a4">
+  <div class="top">
+    <div class="org"><img src="/Users/nishimuranaoki/code/miacis-nirasaki-quiz/print/img/miacis-logo.png" alt=""><div>青少年育成プラザ Miacis<small>韮崎市民交流センター NICORI 地下1階</small></div></div>
+    <img class="after6" src="/Users/nishimuranaoki/code/miacis-nirasaki-quiz/print/img/after6.png" alt="アフター６">
+  </div>
+
+  <div class="hook">韮崎のこと、
+どれだけ
+知ってる？</div>
+
+  <div class="title">
+    <span class="tag">10問・4択・スマホで</span>
+    <b>韮崎クイズ</b>
+  </div>
+
+  <div class="row">
+    <div class="card">
+      <div class="q-badge">Q 例　4択で挑戦！</div>
+      <div class="qq">韮崎市のイメージキャラクター「ニーラ」は、何の生きもの？</div>
+      <div class="ex-grid">
+        
+          <div class="ex-opt">
+            <span class="ex-emoji">🐸</span>
+            <span class="ex-txt">カエル</span>
+          </div>
+        
+          <div class="ex-opt">
+            <span class="ex-emoji">🐦</span>
+            <span class="ex-txt">鳥</span>
+          </div>
+        
+          <div class="ex-opt">
+            <span class="ex-emoji">🐱</span>
+            <span class="ex-txt">ネコ</span>
+          </div>
+        
+          <div class="ex-opt">
+            <span class="ex-emoji">🐢</span>
+            <span class="ex-txt">カメ</span>
+          </div>
+        
+      </div>
+      <div class="more">正解はアプリで！1問10秒のスピード勝負。<br>正解数と答えた時間でその日の順位が決まります。</div>
+    </div>
+    <div class="qr">
+      <div class="box"><svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 124 124" class="segno"><path transform="scale(4)" class="qrline" stroke="#15151a" d="M1 1.5h7m3 0h1m3 0h2m3 0h2m1 0h7m-29 1h1m5 0h1m2 0h2m1 0h1m1 0h2m1 0h1m4 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m4 0h1m2 0h6m2 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m3 0h3m2 0h2m2 0h2m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m3 0h1m1 0h2m1 0h1m4 0h1m1 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m1 0h2m1 0h2m2 0h2m2 0h1m2 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-19 1h2m4 0h5m-21 1h1m2 0h1m1 0h2m1 0h2m1 0h1m2 0h1m3 0h2m1 0h1m1 0h1m-24 1h1m2 0h3m1 0h1m1 0h1m2 0h1m3 0h3m2 0h3m1 0h1m2 0h1m-29 1h1m1 0h2m2 0h2m2 0h1m1 0h2m4 0h2m1 0h2m2 0h3m-27 1h5m2 0h2m3 0h2m1 0h1m1 0h2m1 0h3m2 0h2m-28 1h1m1 0h1m3 0h1m1 0h4m1 0h1m1 0h4m1 0h3m2 0h1m1 0h2m-29 1h2m3 0h1m1 0h2m1 0h3m1 0h2m2 0h4m-20 1h2m2 0h1m1 0h1m1 0h3m4 0h2m1 0h2m1 0h1m1 0h4m-28 1h3m1 0h1m1 0h1m3 0h5m1 0h5m3 0h1m1 0h1m-27 1h2m1 0h1m1 0h1m1 0h2m3 0h6m1 0h2m5 0h1m-27 1h1m2 0h1m2 0h1m2 0h5m1 0h1m1 0h1m2 0h3m1 0h1m2 0h1m-29 1h1m5 0h1m1 0h1m2 0h2m1 0h1m5 0h1m2 0h2m2 0h2m-27 1h1m1 0h2m1 0h1m3 0h2m2 0h1m1 0h4m1 0h3m2 0h2m-29 1h1m2 0h5m1 0h2m1 0h1m2 0h2m1 0h7m1 0h1m-19 1h3m1 0h1m4 0h4m3 0h1m1 0h3m-29 1h7m3 0h2m8 0h1m1 0h1m1 0h1m2 0h1m-28 1h1m5 0h1m1 0h1m2 0h2m1 0h1m1 0h1m1 0h3m3 0h4m-28 1h1m1 0h3m1 0h1m2 0h2m1 0h1m4 0h2m1 0h5m-25 1h1m1 0h3m1 0h1m1 0h6m2 0h4m2 0h6m-28 1h1m1 0h3m1 0h1m2 0h2m2 0h2m4 0h1m4 0h3m1 0h1m-29 1h1m5 0h1m2 0h1m4 0h1m1 0h5m1 0h2m3 0h1m-28 1h7m1 0h1m1 0h1m1 0h1m3 0h3m1 0h1m1 0h2m1 0h1m1 0h1"/></svg>
+</div>
+      <b>ここから挑戦（LINE）</b>
+      <small>LINE で開く（公式LINE のミアキス クイズ）</small>
+    </div>
+  </div>
+
+  <div class="prize-band">
+    <div class="prize-title">
+      <span class="prize-tag">景品</span>
+      <span>参加者全員にプレゼント！</span>
+    </div>
+    <div class="prize-items">
+      <div>🎁 参加した人みんなに お菓子（受付でもらってね）</div><div>🎁 1位は 購買部のチケット</div>
+    </div>
+    <div class="prize-rules">
+      <b>順位の決め方：</b>正解の数が多い人が上 ／ 同じ数なら、正解した問題の回答時間の合計（正解タイム）が短い人が上
+    </div>
+  </div>
+
+  <div class="promo-band">
+    <div class="promo-left">
+      <div class="promo-lead">韮崎のこと、もっと知りたくなった？</div>
+      <div class="promo-title">韮崎100人カイギ Vol.6</div>
+      <div class="promo-date">11.17（火）19:00〜21:00 ＠ミアキス（ニコリ地下1階）</div>
+      <div class="promo-note">韮崎の大人5人が10分ずつ話す夜。中高生 無料・当日参加OK・開場 18:45・聞くだけでOK</div>
+    </div>
+    <div class="promo-qr">
+      <div class="box"><svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 124 124" class="segno"><path transform="scale(4)" class="qrline" stroke="#15151a" d="M1 1.5h7m1 0h4m1 0h1m2 0h5m1 0h7m-29 1h1m5 0h1m1 0h3m1 0h1m1 0h1m1 0h3m3 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m4 0h6m1 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h3m6 0h3m2 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m7 0h3m2 0h1m2 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m2 0h2m2 0h1m3 0h4m1 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-21 1h1m1 0h2m2 0h1m2 0h4m-21 1h1m1 0h2m1 0h3m2 0h1m1 0h2m2 0h4m2 0h1m2 0h1m1 0h2m-27 1h2m1 0h1m4 0h1m1 0h2m2 0h1m1 0h7m3 0h1m-26 1h1m2 0h5m2 0h1m2 0h2m2 0h1m1 0h3m1 0h2m-28 1h1m4 0h1m5 0h1m3 0h2m1 0h1m1 0h5m3 0h1m-27 1h1m1 0h1m1 0h1m2 0h1m1 0h2m1 0h4m1 0h1m5 0h2m-27 1h1m1 0h2m3 0h5m2 0h7m1 0h1m3 0h3m-29 1h1m2 0h1m1 0h2m1 0h1m2 0h1m1 0h1m3 0h1m1 0h3m4 0h3m-26 1h1m3 0h1m1 0h4m1 0h2m2 0h1m2 0h2m1 0h1m2 0h1m-28 1h1m1 0h1m3 0h1m2 0h1m1 0h2m1 0h1m3 0h4m2 0h2m1 0h1m-27 1h1m1 0h1m1 0h1m3 0h1m1 0h1m2 0h2m4 0h1m4 0h3m-28 1h1m1 0h2m2 0h4m2 0h4m4 0h3m1 0h1m1 0h1m-24 1h1m1 0h1m1 0h1m3 0h1m1 0h3m1 0h3m1 0h3m2 0h1m-26 1h1m1 0h1m2 0h1m1 0h1m1 0h2m1 0h2m2 0h10m-19 1h2m6 0h1m1 0h1m1 0h1m3 0h5m-29 1h7m1 0h1m1 0h2m2 0h1m1 0h2m1 0h2m1 0h1m1 0h2m1 0h1m-28 1h1m5 0h1m1 0h2m3 0h2m1 0h1m1 0h1m1 0h1m3 0h2m1 0h2m-29 1h1m1 0h3m1 0h1m5 0h1m4 0h2m1 0h5m1 0h1m-27 1h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h2m1 0h2m2 0h3m2 0h2m2 0h1m-29 1h1m1 0h3m1 0h1m1 0h2m1 0h3m2 0h5m5 0h1m1 0h1m-29 1h1m5 0h1m4 0h1m4 0h1m3 0h2m1 0h2m2 0h1m-28 1h7m1 0h4m2 0h2m2 0h4m1 0h1m1 0h1m1 0h1"/></svg>
+</div>
+      <small>100人カイギ</small>
+    </div>
+  </div>
+
+  
+
+  <div class="foot">開館 平日 15:00–21:30／土日祝 9:30–21:30／休館 毎週火曜・第3月曜（11/17 は特別に開きます）</div>
+</div>
+</body>
+</html>
